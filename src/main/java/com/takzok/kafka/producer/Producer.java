@@ -47,13 +47,20 @@ public class Producer implements KafkaClientInterface {
 
     Properties props = new PropertyUtil(new File(properties, PROPERTY_FILE).getPath()).readProperty();
     KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(props);
+    logger.log(Level.INFO, props.entrySet());
     try {
       ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, payload);
       for (int i = 0; i < records; i++) {
         // Send record asynchronously
-        kafkaProducer.send(record);
+        kafkaProducer.send(record, (metadata, exception) -> {
+          if (metadata != null) {
+        logger.log(Level.INFO, "Message produced, offset: " + metadata.offset()
+            + ", partition: " + metadata.partition() + ", timestamp: " + metadata.timestamp() );
+          } else {
+            exception.printStackTrace();
+          }
+        });
         Thread.sleep(sleepTime);
-
         System.out.println("record sended asynchronously.");
       }
     } catch (final Exception e) {
@@ -64,16 +71,17 @@ public class Producer implements KafkaClientInterface {
   }
 
   public void syncProducer(String topic, String payload, int records, String properties) throws IOException {
-    Properties props = new PropertyUtil(properties + PROPERTY_FILE).readProperty();
+    Properties props = new PropertyUtil(new File(properties, PROPERTY_FILE).getPath()).readProperty();
+    logger.log(Level.INFO, props.entrySet());
     KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(props);
 
     try {
       ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, payload);
       for (int i = 0; i < records; i++) {
         // Send record synchronously
-        System.out.println("record sended synchronously.");
+        System.out.println("Attempt to send a record synchronously.");
         Future<RecordMetadata> future = kafkaProducer.send(record);
-        RecordMetadata recordMetadata = future.get(1000, TimeUnit.MILLISECONDS);
+        RecordMetadata recordMetadata = future.get(10000, TimeUnit.MILLISECONDS);
         logger.log(Level.INFO, "Message produced, payload: " + payload + ", offset: " + recordMetadata.offset()
             + ", partition: " + recordMetadata.partition() + ", partitonsInfo: " + kafkaProducer.partitionsFor(topic));
         Thread.sleep(sleepTime);
@@ -117,18 +125,18 @@ public class Producer implements KafkaClientInterface {
       //      return;
       //    }
       
-      logger.log(Level.INFO, "Create Producer");
-      // Produce
-      try {
-        if (asyncFlag) {
-          producer.asyncProducer(producer.topicName, producer.recordBuilder(producer.recordSize), producer.numOfRecords, producer.properties);
-        } else {
-          producer.syncProducer(producer.topicName, producer.recordBuilder(producer.recordSize), producer.numOfRecords, producer.properties);
-        }
-      } catch (IOException e) {
-        logger.log(Level.ERROR,"Failed to open the property file: " + e.getMessage());
-        return;
+    logger.log(Level.INFO, "Create Producer");
+    // Produce
+    try {
+      if (asyncFlag) {
+        producer.asyncProducer(producer.topicName, producer.recordBuilder(producer.recordSize), producer.numOfRecords, producer.properties);
+      } else {
+        producer.syncProducer(producer.topicName, producer.recordBuilder(producer.recordSize), producer.numOfRecords, producer.properties);
       }
-      System.out.println("finished.");
+    } catch (IOException e) {
+      logger.log(Level.ERROR,"Failed to open the property file: " + e.getMessage());
+      return;
     }
+    System.out.println("finished.");
   }
+}
