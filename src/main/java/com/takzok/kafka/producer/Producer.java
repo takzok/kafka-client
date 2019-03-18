@@ -32,7 +32,7 @@ public class Producer implements KafkaClientInterface {
   public String topicName;
 
   @Option(name = "-a", aliases = "--asynchronously", metaVar = "Send asynchronously", usage = "Set to send record asynchronously. Defaut: False(Send records synchronously.)")
-  public boolean asyncFlag = false;
+  public boolean isAsync = false;
   @Option(name = "-i", aliases = "--interval", metaVar = "Send interval between record produce", usage = "Set interval between record produce.  Defaut: 500ms")
   public int sleepTime = 500;
   @Option(name = "-n", aliases = "--records", metaVar = "Record number", usage = "Number of records to produce. Default: 10")
@@ -47,9 +47,9 @@ public class Producer implements KafkaClientInterface {
 
     Properties props = new PropertyUtil(new File(properties, PROPERTY_FILE).getPath()).readProperty();
     KafkaProducer<String, String> kafkaProducer = new KafkaProducer<String, String>(props);
-    logger.log(Level.INFO, props.entrySet());
     try {
       ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, payload);
+      logger.log(Level.INFO, "Attempt to send a record asynchronously.");
       for (int i = 0; i < records; i++) {
         // Send record asynchronously
         kafkaProducer.send(record, (metadata, exception) -> {
@@ -61,10 +61,9 @@ public class Producer implements KafkaClientInterface {
           }
         });
         Thread.sleep(sleepTime);
-        System.out.println("record sended asynchronously.");
       }
     } catch (final Exception e) {
-      e.printStackTrace();
+        logger.log(Level.ERROR, e.getStackTrace());
     } finally {
       kafkaProducer.close();
     }
@@ -77,11 +76,11 @@ public class Producer implements KafkaClientInterface {
 
     try {
       ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, payload);
+      logger.log(Level.INFO, "Attempt to send a record synchronously.");
       for (int i = 0; i < records; i++) {
         // Send record synchronously
-        System.out.println("Attempt to send a record synchronously.");
         Future<RecordMetadata> future = kafkaProducer.send(record);
-        RecordMetadata recordMetadata = future.get(10000, TimeUnit.MILLISECONDS);
+        RecordMetadata recordMetadata = future.get(1000, TimeUnit.MILLISECONDS);
         logger.log(Level.INFO, "Message produced, payload: " + payload + ", offset: " + recordMetadata.offset()
             + ", partition: " + recordMetadata.partition() + ", partitonsInfo: " + kafkaProducer.partitionsFor(topic));
         Thread.sleep(sleepTime);
@@ -128,7 +127,7 @@ public class Producer implements KafkaClientInterface {
     logger.log(Level.INFO, "Create Producer");
     // Produce
     try {
-      if (asyncFlag) {
+      if (isAsync) {
         producer.asyncProducer(producer.topicName, producer.recordBuilder(producer.recordSize), producer.numOfRecords, producer.properties);
       } else {
         producer.syncProducer(producer.topicName, producer.recordBuilder(producer.recordSize), producer.numOfRecords, producer.properties);
@@ -137,6 +136,6 @@ public class Producer implements KafkaClientInterface {
       logger.log(Level.ERROR,"Failed to open the property file: " + e.getMessage());
       return;
     }
-    System.out.println("finished.");
+    logger.log(Level.INFO,"finished.");
   }
 }
