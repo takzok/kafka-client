@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import com.takzok.kafka.KafkaClientInterface;
 import com.takzok.kafka.util.PropertyUtil;
@@ -80,7 +78,7 @@ public class Producer implements KafkaClientInterface {
       for (int i = 0; i < records; i++) {
         // Send record synchronously
         Future<RecordMetadata> future = kafkaProducer.send(record);
-        RecordMetadata recordMetadata = future.get(1000, TimeUnit.MILLISECONDS);
+        RecordMetadata recordMetadata = future.get();
         logger.log(Level.INFO, "Message produced, payload: " + payload + ", offset: " + recordMetadata.offset()
             + ", partition: " + recordMetadata.partition() + ", partitonsInfo: " + kafkaProducer.partitionsFor(topic));
         Thread.sleep(sleepTime);
@@ -88,8 +86,6 @@ public class Producer implements KafkaClientInterface {
     } catch (InterruptedException e) {
       logger.log(Level.ERROR, e.getMessage());
     } catch (ExecutionException e) {
-      logger.log(Level.ERROR, e.getMessage());
-    } catch (TimeoutException e) {
       logger.log(Level.ERROR, e.getMessage());
     } finally {
       kafkaProducer.close();
