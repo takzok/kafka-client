@@ -15,27 +15,28 @@ plugins {
 }
 
 // Define the main class for the application
-mainClassName = 'com.ibm.jp.kadono.kafka.KafkaClient'
+mainClassName = 'com.ibm.jp.kadono.kafka.KafkaSimpleProducer'
 
 dependencies {
     // This dependency is found on compile classpath of this component and consumers.
-    compile 'com.google.guava:guava:23.0'
+    // compile 'com.google.guava:guava:23.0'
     // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
-    // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
-    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.0.1'
-    // https://mvnrepository.com/artifact/log4j/log4j
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
-    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
-    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
-    testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
-    // https://mvnrepository.com/artifact/args4j/args4j
-    compile group: 'args4j', name: 'args4j', version: '2.33'
+    testImplementation 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    implementation 'org.apache.commons:commons-lang3:3.8.1'
+    implementation 'org.apache.kafka:kafka-clients:2.2.0'
+    implementation 'log4j:log4j:1.2.17'
+    implementation 'org.apache.logging.log4j:log4j-slf4j-impl:2.11.0'
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'args4j:args4j:2.33'
+    implementation 'org.apache.avro:avro:1.10.2'
+    implementation 'io.confluent:kafka-avro-serializer:6.2.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.14.1'
+    implementation 'com.google.code.gson:gson:2.10'
+    implementation 'io.apicurio:apicurio-registry-serdes-avro-serde:2.2.5.Final'
+
+
+
 
 }
 
@@ -43,5 +44,8 @@ dependencies {
 repositories {
     // Use jcenter for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    mavenCentral()
+    maven {
+        url "https://packages.confluent.io/maven/"
+    }
 }

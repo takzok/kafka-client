@@ -23,7 +23,8 @@ public class KafkaClient {
   @Argument(handler = SubCommandHandler.class, required = true, metaVar = "ClientType", usage = "Client type")
   @SubCommands({
     @SubCommand(name = "Producer", impl = Producer.class),
-    @SubCommand(name = "Consumer", impl = Consumer.class)
+    @SubCommand(name = "Consumer", impl = Consumer.class),
+    @SubCommand(name = "SuspendableConsumer", impl = SuspendableConsumer.class)
   })
 //  @Option(name = "-h", aliases = "--help", usage = "Print usage message and exit")
 //  private boolean usageFlag = false;
