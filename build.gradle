@@ -6,6 +6,7 @@
  * user guide available at https://docs.gradle.org/4.10.2/userguide/tutorial_java_projects.html
  */
 
+
 plugins {
     // Apply the java plugin to add support for Java
     id 'java'
@@ -15,27 +16,27 @@ plugins {
 }
 
 // Define the main class for the application
-mainClassName = 'com.ibm.jp.kadono.kafka.KafkaClient'
+mainClassName = 'com.takzok.kafka.KafkaClient'
 
 dependencies {
-    // This dependency is found on compile classpath of this component and consumers.
-    compile 'com.google.guava:guava:23.0'
+    // This dependency is found on implementation classpath of this component and consumers.
+    implementation 'com.google.guava:guava:23.0'
     // Use JUnit test framework
-    testCompile 'junit:junit:4.12'
+    testImplementation 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients
-    compile group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.0.1'
+    implementation group: 'org.apache.kafka', name: 'kafka-clients', version: '0.10.0.1'
     // https://mvnrepository.com/artifact/log4j/log4j
-    compile group: 'log4j', name: 'log4j', version: '1.2.17'
+    implementation group: 'log4j', name: 'log4j', version: '1.2.17'
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
-    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
-    testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
+    testImplementation group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.21'
     // https://mvnrepository.com/artifact/args4j/args4j
-    compile group: 'args4j', name: 'args4j', version: '2.33'
+    implementation group: 'args4j', name: 'args4j', version: '2.33'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    implementation group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
 
 }
 
